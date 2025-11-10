@@ -45,7 +45,7 @@ The system consists of four main components:
 
 | Workflow | Form Input | Google Sheet Output |
 |-----------|-------------|----------------------|
-| ![Workflow](screenshots/workflow.png) | ![Form](screenshots/form.png) | ![Sheet](screenshots/sheet.png) |
+
 
 *(Replace with actual image paths if you rename your screenshots folder.)*
 
