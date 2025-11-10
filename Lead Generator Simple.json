@@ -1,0 +1,330 @@
+{
+  "name": "Lead Generator Simple",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "LEAD GENERATOR BOT",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "What do you want to search?"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.3,
+      "position": [
+        0,
+        0
+      ],
+      "id": "870e0c66-e6b0-47df-868c-6a05134c9d44",
+      "name": "On form submission",
+      "webhookId": "7e863dac-ab15-4503-9601-f9ae07f07544"
+    },
+    {
+      "parameters": {
+        "url": "https://google-map-scraper1.p.rapidapi.com/api/places/search",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "query",
+              "value": "={{ $json['What do you want to search?'] }}"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-rapidapi-host",
+              "value": "google-map-scraper1.p.rapidapi.com"
+            },
+            {
+              "name": "x-rapidapi-key",
+              "value": "7ab6a1be3emsh175e468e9bf5978p11711ajsn76015c23a07a"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        416,
+        0
+      ],
+      "id": "6b932d70-13b5-40bf-b184-816045666eb1",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "data.results",
+        "include": "selectedOtherFields",
+        "fieldsToInclude": "data.results[0].name, data.results[0].phone_number, data.results[0].address, data.results[0].website, data.results[0].opening_status",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        624,
+        0
+      ],
+      "id": "45f26221-757a-4e53-8ca1-7a1313719450",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "44022f10-4362-4def-9fd3-4dc63f7d3ac7",
+              "leftValue": "=Titan",
+              "rightValue": "Lenskart.com",
+              "operator": {
+                "type": "string",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "7e3b6bb5-22b3-420c-9aad-b835239dea6d",
+              "leftValue": "={{ $json['data.results'].nam }}",
+              "rightValue": "Titan",
+              "operator": {
+                "type": "string",
+                "operation": "notContains"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        832,
+        0
+      ],
+      "id": "0a61eee9-3015-4b1f-8c6f-f5c44cc26e83",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1JufKCQusn1Wq1WhxUJWUzG9IsqhPp7p8DUtuziBYYKc",
+          "mode": "list",
+          "cachedResultName": "Lead Generation",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1JufKCQusn1Wq1WhxUJWUzG9IsqhPp7p8DUtuziBYYKc/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1JufKCQusn1Wq1WhxUJWUzG9IsqhPp7p8DUtuziBYYKc/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Address": "={{ $json['data.results'].address }}",
+            "Name": "={{ $json['data.results'].name }}",
+            "Place": "={{ $json['data.results[0].address'].split(\",\").slice(-3)[0].trim() }}",
+            "State": "={{ $json['data.results[0].address'].split(\",\").slice(-2)[0] }}",
+            "Phone": "={{ $json['data.results'].phone_number }}",
+            "Website": "={{ $json['data.results'].website }}",
+            "Notes": "={{ $json['data.results'].opening_status }}",
+            "Category": "={{ $json['data.results'].tag }}"
+          },
+          "matchingColumns": [
+            "Address"
+          ],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Address",
+              "displayName": "Address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Place",
+              "displayName": "Place",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "State",
+              "displayName": "State",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Phone",
+              "displayName": "Phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Website",
+              "displayName": "Website",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "SourceURL",
+              "displayName": "SourceURL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Category",
+              "displayName": "Category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Notes",
+              "displayName": "Notes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1040,
+        0
+      ],
+      "id": "89e312aa-cc88-4fcc-b787-eaff38d233e4",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "RJP0t7TUfR284aBA",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "487f219c-fb8a-4ae4-9969-cdfd07bb9c2e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "95a342b7aaf0105af9078155dd2fd3349240c51e6757d218aa0e7a2169ca3d08"
+  },
+  "id": "gkokeGGE5hoiChtK",
+  "tags": []
+}
