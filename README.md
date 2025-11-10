@@ -47,7 +47,7 @@ The system consists of four main components:
 |-----------|-------------|----------------------|
 
 
-*(Replace with actual image paths if you rename your screenshots folder.)*
+
 
 ---
 
